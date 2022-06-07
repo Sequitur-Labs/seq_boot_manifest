@@ -12,8 +12,8 @@ written consent of Sequitur Labs Inc. is forbidden.
 #include <linux/types.h>
 #include <linux/string.h>
 #include <asm/string.h>
-#include <seq/seq_list.h>
-#include <seq/seq_manifest.h>
+#include "seq_list.h"
+#include "seq_manifest.h"
 
 #define NAME_SIZE 32
 #define ALIGNMENT_BYTES 8
@@ -180,7 +180,7 @@ static int section_proc(SeqEntry *e, void *data)
 	return 0;
 }
 
-static int free_section_proc(SeqEntry *e,void *data)
+static int free_section_proc(SeqEntry *e, void *data)
 {
 	char *section=NULL;
 	if(e) {
@@ -332,7 +332,7 @@ SeqManifest *seq_load_manifest(uintptr_t where)
 	return res;
 }
 
-SeqManifest *seq_newS_manifest( void ){
+SeqManifest *seq_new_manifest( void ){
 	SeqManifest *res=(SeqManifest*)malloc(sizeof(SeqManifest));
 	if(!res) {
 		return res;
@@ -400,7 +400,7 @@ SeqParamKey *seq_find_param(SeqManifest *params, const char *section, const char
 }
 
 
-void seq_delete_param_by_name(SeqManifest*params, const char *section, const char *name)
+void seq_delete_param_by_name(SeqManifest *params, const char *section, const char *name)
 {
 	SeqParamKey *key=seq_find_param(params,section,name);
 	if (key) {
@@ -546,7 +546,7 @@ PTR_CONVENIENCE(binary,uint8_t*,SEQ_TYPE_BINARY)
 
 char* seq_get_keyval_string(SeqManifest *slip, const char *section, const char *keyname)
 {
-	SeqParamKey* key=seq_find_param(slip,section,keyname);
+	SeqParamKey *key=seq_find_param(slip,section,keyname);
 	if (key) {
 		return seq_value_string(key);
 	}
@@ -557,9 +557,20 @@ char* seq_get_keyval_string(SeqManifest *slip, const char *section, const char *
 uint32_t seq_get_keyval_uint32(SeqManifest *slip, const char *section, const char *keyname)
 {
 	uint32_t res=0;
-	SeqParamKey* key=seq_find_param(slip,section,keyname);
+	SeqParamKey *key=seq_find_param(slip,section,keyname);
 	if (key) {
 		res=(uint32_t)seq_value_uint32_t(key);
+	}
+
+	return res;
+}
+
+uint64_t seq_get_keyval_uint64(SeqManifest *slip, const char *section, const char *keyname)
+{
+	uint32_t res=0;
+	SeqParamKey *key=seq_find_param(slip,section,keyname);
+	if (key) {
+		res=(uint64_t)seq_value_uint64_t(key);
 	}
 
 	return res;

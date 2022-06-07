@@ -96,9 +96,15 @@ PTR_CONVENIENCE_DECL(binary, uint8_t*)
  * The caller is responsible for the memory allocated.
  */
 char *seq_get_keyval_string(SeqManifest *slip, const char *section, const char *keyname);
+
 /*
  * Returns the uint32_t 'value' of the key at 'section:keyname'.
  */
 uint32_t seq_get_keyval_uint32(SeqManifest *slip, const char *section, const char *keyname);
+
+/*
+ * Returns the uint64_t 'value' of the key at 'section:keyname'.
+ */
+uint64_t seq_get_keyval_uint64(SeqManifest *slip, const char *section, const char *keyname);
 
 #endif /*SEQ_PARAMS_H*/

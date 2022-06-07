@@ -11,7 +11,7 @@ written consent of Sequitur Labs Inc. is forbidden.
 #include <common.h>
 #include <malloc.h>
 #include <linux/types.h>
-#include <seq/seq_list.h>
+#include "seq_list.h"
 
 static int free_func(SeqEntry *item, void *data)
 {
