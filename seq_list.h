@@ -30,12 +30,13 @@ typedef struct seq_list_t{
 
 typedef int (*SeqIterFunc)(SeqEntry *item, void* data);
 
-SeqList *seq_new_list( void );
+SeqList * seq_new_list( void );
 void seq_append_entry(SeqList *list,void *data);
 void seq_delete_entry(SeqList *list, SeqEntry *entry);
 void seq_free_list(SeqList *list, SeqIterFunc freefunc);
 int seq_iterate_list(SeqList *list, SeqEntry *start, SeqIterFunc callback, void *data);
-SeqEntry *seq_search_list(SeqList *list, SeqEntry *start, SeqIterFunc compback, void *data);
+SeqEntry * seq_search_list(SeqList *list, SeqEntry *start, SeqIterFunc compback, void *data);
 int seq_get_list_count(SeqList *list);
+SeqEntry * seq_index_list(SeqList *list, int index);
 
 #endif /*SEQ_LIST_H*/

@@ -27,6 +27,25 @@ typedef struct writedata {
 	uint32_t numentries;
 	uint32_t totalbytes;
 } SeqWriteDataType;
+
+/*
+ static char* seq_strrchr(char* str,int character)
+ {
+	char* res=0;
+	char* ptr=str+(strlen(str)-1);
+	do
+	{
+		if (*ptr==character)
+		{
+			res=ptr;
+			break;
+		}
+		ptr--;
+	}
+	while (ptr>=str);
+	return res;
+ }
+ */
 	
 //-----------------------------------------------
 // iterators
@@ -189,6 +208,48 @@ static int free_section_proc(SeqEntry *e, void *data)
 	if(section) {
 		free(section);
 	}
+	return 0;
+}
+
+static int paramkeysproc(SeqEntry *e, void *data)
+{
+	struct paramlistdata *plistdata=(struct paramlistdata*)data;
+	SeqList *paramlist=NULL;
+	const char *section=NULL;
+	SeqParamKey *key=NULL;
+	char *testkey=NULL;
+	char *point=NULL;
+
+
+	if(!data || !e){
+		return -1;
+	}
+
+	paramlist = plistdata->paramlist;
+	section=plistdata->section;
+	key=(SeqParamKey*)e->data;
+
+	if(!paramlist || !section || !key){
+		return -2;
+	}
+
+	testkey=(char*)malloc(strlen(key->key)+1);
+	if(!testkey) {
+		return -3;
+	}
+
+	memset(testkey,0,strlen(key->key)+1);
+	memcpy(testkey,key->key,strlen(key->key));
+
+	point=strchr(testkey,'_');
+
+	if (point) {
+		*point=0;
+		if (!strcmp(testkey,section))
+			seq_append_entry(paramlist,e->data);
+	}
+
+	free(testkey);
 	return 0;
 }
 
@@ -508,6 +569,49 @@ void seq_free_manifest_sections(SeqList *sectionlist)
 	}
 }
 
+SeqList * seq_manifest_section_keys(SeqManifest *params, const char *section)
+{
+	SeqList *res=SeqNewList();
+	struct paramlistdata pdata;
+	pdata.paramlist=res;
+	pdata.section=section;
+	seq_iterate_list(params->params,0,paramkeysproc,&pdata);
+	return res;
+}
+
+
+void seq_free_manifest_section_keys(SeqList *keylist)
+{
+	seq_free_list(keylist,0);
+}
+
+char * seq_get_key_section(SeqParamKey *key){
+	char* res=NULL;
+	char *point = strrchr(key->key, '_');
+	if(point) {
+		size_t len = (point-key->key);
+		res = (char*)MALLOC(len+1);
+		if(res) {
+			memset(res, 0, len+1);
+			memcpy(res, key->key, len);
+		}
+	}
+	return res;
+}
+
+char * seq_get_key_name(SeqParamKey *key){
+	char* res=NULL;
+	char *point = strrchr(key->key, '_');
+	if(point){
+		size_t len = strlen(point);
+		res = (char*)MALLOC(len);
+		if(res) {
+			memset(res, 0, len);
+			memcpy(res, point+1, len-1);
+		}
+	}
+	return res;
+}
 
 #define INT_CONVENIENCE(TYPE,ID) TYPE seq_value_##TYPE(SeqParamKey *key)	\
 	{ \

@@ -74,6 +74,13 @@ void seq_write_params(SeqManifest *params, uintptr_t dest);
 uint8_t *seq_get_binary_manifest(SeqManifest *params, int *size);
 SeqList *seq_manifest_sections(SeqManifest *params);
 void seq_free_manifest_sections(SeqList *sectionlist);
+SeqList * seq_manifest_section_keys(SeqManifest *params, const char *section);
+void seq_free_manifest_section_keys(SeqList *keylist);
+
+//Get the 'section' part of the key
+char * seq_get_key_section(SeqParamKey *key);
+//Get the 'name' part of the key
+char * seq_get_key_name(SeqParamKey *key);
 
 // value convenience functions
 #define INT_CONVENIENCE_DECL(TYPE) TYPE seq_value_##TYPE(SeqParamKey *key);

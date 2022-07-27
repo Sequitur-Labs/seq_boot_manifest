@@ -158,3 +158,23 @@ int seq_get_list_count(SeqList *list)
 	seq_iterate_list(list, 0, count_func, &res);
 	return res;
 }
+
+SeqEntry * seq_index_list(SeqList *list, int index)
+{
+	SeqEntry *res=NULL;
+	int count=0;
+	if(!list) {
+		return res;
+	}
+
+	count = seq_get_list_count(list);
+	if (index<count) {
+		SeqEntry *ptr=list->head;
+		for (int ptrindex=0; ptrindex<index; ptrindex++) {
+			ptr=ptr->next;
+		}
+
+		res=ptr;
+	}
+	return res;
+}
