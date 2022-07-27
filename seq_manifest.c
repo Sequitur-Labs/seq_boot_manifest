@@ -28,6 +28,11 @@ typedef struct writedata {
 	uint32_t totalbytes;
 } SeqWriteDataType;
 
+typedef struct paramlistdata {
+	SeqList *paramlist;
+	const char *section;
+} SeqParamListData;
+
 /*
  static char* seq_strrchr(char* str,int character)
  {
@@ -213,7 +218,7 @@ static int free_section_proc(SeqEntry *e, void *data)
 
 static int paramkeysproc(SeqEntry *e, void *data)
 {
-	struct paramlistdata *plistdata=(struct paramlistdata*)data;
+	SeqParamListData *plistdata=(SeqParamListData*)data;
 	SeqList *paramlist=NULL;
 	const char *section=NULL;
 	SeqParamKey *key=NULL;
@@ -571,11 +576,13 @@ void seq_free_manifest_sections(SeqList *sectionlist)
 
 SeqList * seq_manifest_section_keys(SeqManifest *params, const char *section)
 {
-	SeqList *res=SeqNewList();
-	struct paramlistdata pdata;
-	pdata.paramlist=res;
-	pdata.section=section;
-	seq_iterate_list(params->params,0,paramkeysproc,&pdata);
+	SeqList *res=seq_new_list();
+	SeqParamListData pdata;
+	if(res) {
+		pdata.paramlist=res;
+		pdata.section=section;
+		seq_iterate_list(params->params,0,paramkeysproc,&pdata);
+	}
 	return res;
 }
 
@@ -590,7 +597,7 @@ char * seq_get_key_section(SeqParamKey *key){
 	char *point = strrchr(key->key, '_');
 	if(point) {
 		size_t len = (point-key->key);
-		res = (char*)MALLOC(len+1);
+		res = (char*)malloc(len+1);
 		if(res) {
 			memset(res, 0, len+1);
 			memcpy(res, key->key, len);
@@ -604,7 +611,7 @@ char * seq_get_key_name(SeqParamKey *key){
 	char *point = strrchr(key->key, '_');
 	if(point){
 		size_t len = strlen(point);
-		res = (char*)MALLOC(len);
+		res = (char*)malloc(len);
 		if(res) {
 			memset(res, 0, len);
 			memcpy(res, point+1, len-1);
