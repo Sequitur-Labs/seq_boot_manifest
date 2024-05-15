@@ -450,13 +450,18 @@ SeqParamKey *seq_find_param(SeqManifest *params, const char *section, const char
 {
 	SeqParamKey *res=0;
 	SeqEntry *entry = NULL;
-	char *keyname=create_key_name(section,name);
+	char *keyname = NULL;
+
+	if (!params || !section || !name) {
+		return NULL;
+	}
+
+	keyname = create_key_name(section,name);
 	if(!keyname) {
 		return res;
 	}
 
 	entry=seq_search_list(params->params,0,find_proc,keyname);
-
 	if (entry) {
 		res=(SeqParamKey*)entry->data;
 	}
