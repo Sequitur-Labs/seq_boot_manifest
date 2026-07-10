@@ -7,11 +7,15 @@ or in part, of this software, including any attempt to obtain a
 human-readable version of this software, without the express, prior
 written consent of Sequitur Labs Inc. is forbidden.
 ================================================*/
-#include <common.h>
+#include <stdlib.h>
+#include <string.h>
 #include <malloc.h>
-#include <linux/types.h>
-#include <linux/string.h>
-#include <asm/string.h>
+
+#ifndef _LINUX_TYPES_H
+#include <stdint.h>
+#endif
+
+
 #include "seq_list.h"
 #include "seq_manifest.h"
 

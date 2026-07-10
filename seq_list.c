@@ -8,9 +8,14 @@ human-readable version of this software, without the express, prior
 written consent of Sequitur Labs Inc. is forbidden.
 ================================================*/
 
-#include <common.h>
+#include <stdlib.h>
+#include <string.h>
 #include <malloc.h>
-#include <linux/types.h>
+
+#ifndef _LINUX_TYPES_H
+#include <stdint.h>
+#endif
+
 #include "seq_list.h"
 
 static int free_func(SeqEntry *item, void *data)
