@@ -12,8 +12,6 @@ written consent of Sequitur Labs Inc. is forbidden.
 
 #include "seq_list.h"
 
-//#define DEBUG_BUILD 1
-
 //SEQ is for Sequitur Params
 #define SEQ_TYPE_UNKNOWN 0
 
@@ -30,11 +28,19 @@ written consent of Sequitur Labs Inc. is forbidden.
 #define SEQ_TYPE_STRING  9
 #define SEQ_TYPE_BINARY  10
 
+//Only used in configuration files
+#define SEQ_TYPE_FILE  11
+
 /*
  * Values for SeqParamKey  : flags.
  */
 #define SEQ_FLAG_VALUE_DYNAMIC 1 //The 'value' has been dynamically allocated.
-#define SEQ_FLAG_KEY_DYNAMIC 2   //The 'key' has been dynamically allocated.
+
+#define SEQ_MANIFEST_MAX_KEY_SIZE 32
+
+#define SEQ_MANIFEST_ALIGNMENT_BYTES 8
+#define SEQ_MANIFEST_PARAM_PADDING(s) ((SEQ_MANIFEST_ALIGNMENT_BYTES-((s)%SEQ_MANIFEST_ALIGNMENT_BYTES))%SEQ_MANIFEST_ALIGNMENT_BYTES)
+
 
 typedef struct {
 	uint8_t magic[8];
@@ -44,7 +50,7 @@ typedef struct {
 
 
 typedef struct seqp_key {
-	char *key;
+	char key[SEQ_MANIFEST_MAX_KEY_SIZE];
 	uint32_t type;
 	uint32_t size;
 	void *value;

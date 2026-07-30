@@ -21,142 +21,139 @@ written consent of Sequitur Labs Inc. is forbidden.
 static int free_func(SeqEntry *item, void *data)
 {
 	if (data) {
-		SeqIterFunc freefunc=(SeqIterFunc)data;
-		freefunc(item,0);
+		SeqIterFunc freefunc = (SeqIterFunc) data;
+		freefunc(item, 0);
 	}
 	free(item);
 	return 0;
 }
 
-
 static int count_func(SeqEntry *e, void *data)
 {
-	*(int*)data+=1;
+	*(int *)data += 1;
 	return 0;
 }
 
 //-----------------------------------------------
 
-
 SeqList *seq_new_list()
 {
-	SeqList *res=(SeqList*)malloc(sizeof(SeqList));
-	res->head=0;
-	res->tail=0;
+	SeqList *res = (SeqList *)malloc(sizeof(SeqList));
+	res->head = 0;
+	res->tail = 0;
 	return res;
 }
 
-void seq_append_entry(SeqList *list,void *data)
+void seq_append_entry(SeqList *list, void *data)
 {
-	SeqEntry *entry=(SeqEntry*)malloc(sizeof(SeqEntry));
+	SeqEntry *entry = (SeqEntry *)malloc(sizeof(SeqEntry));
 	if (entry) {
-		entry->data=data;
-		entry->next=0;
-		entry->prev=0;
-		if (list->head==0 || list->tail==0) {
-			list->head=entry;
-			list->tail=entry;
+		entry->data = data;
+		entry->next = 0;
+		entry->prev = 0;
+		if (list->head == 0 || list->tail == 0) {
+			list->head = entry;
+			list->tail = entry;
 		} else {
-			list->tail->next=entry;
-			entry->prev=list->tail;
-			list->tail=entry;
+			list->tail->next = entry;
+			entry->prev = list->tail;
+			list->tail = entry;
 		}
 	} else {
 		printf("Failed to allocate memory for adding item to list!!!\n");
 	}
 }
 
-void seq_delete_entry(SeqList *list,SeqEntry *entry)
+void seq_delete_entry(SeqList *list, SeqEntry *entry)
 {
-	if(!entry) {
+	if (!entry) {
 		return;
 	}
 
 	if (entry->prev) {
-		entry->prev->next=entry->next;
+		entry->prev->next = entry->next;
 	}
 
 	if (entry->next) {
-		entry->next->prev=entry->prev;
+		entry->next->prev = entry->prev;
 	}
 
-	if(!list) {
+	if (!list) {
 		return;
 	}
 
-	if(entry == list->head) {
+	if (entry == list->head) {
 		list->head = entry->next;
 	}
-	if(entry == list->tail) {
+	if (entry == list->tail) {
 		list->tail = entry->prev;
 	}
 }
 
 void seq_free_list(SeqList *list, SeqIterFunc freeback)
 {
-	if(!list) {
+	if (!list) {
 		return;
 	}
 
-	seq_iterate_list(list,0,free_func,freeback);
+	seq_iterate_list(list, 0, free_func, freeback);
 	free(list);
 }
 
-
 int seq_iterate_list(SeqList *list, SeqEntry *start, SeqIterFunc callback, void *data)
 {
-	SeqEntry *ptr=start;
-	int cbackres=0;
+	SeqEntry *ptr = start;
+	int cbackres = 0;
 
-	if(!list) {
+	if (!list) {
 		return cbackres;
 	}
 
-	if (ptr==0) {
-		ptr=list->head;
+	if (ptr == 0) {
+		ptr = list->head;
 	}
-	
+
 	while (ptr) {
-		SeqEntry *next=ptr->next;
-		cbackres=callback(ptr,data);
+		SeqEntry *next = ptr->next;
+		cbackres = callback(ptr, data);
 		if (cbackres) {
 			break;
 		}
-		ptr=next;
+		ptr = next;
 	}
 	return cbackres;
 }
 
 SeqEntry *seq_search_list(SeqList *list, SeqEntry *start, SeqIterFunc compback, void *data)
 {
-	SeqEntry *ptr=start;
-	SeqEntry *res=0;
-	int cbackres=0;
+	SeqEntry *ptr = start;
+	SeqEntry *res = 0;
+	int cbackres = 0;
 
-	if(!list) {
+	if (!list) {
 		return res;
 	}
 
-	if (ptr==0) {
-		ptr=list->head;
+	if (ptr == 0) {
+		ptr = list->head;
 	}
-	
+
 	while (ptr) {
-		SeqEntry *next=ptr->next;
-		cbackres=compback(ptr,data);
+		SeqEntry *next = ptr->next;
+		cbackres = compback(ptr, data);
 		if (cbackres) {
-			res=ptr;
+			res = ptr;
 			break;
 		}
-		ptr=next;
+		ptr = next;
 	}
 	return res;
 }
 
 int seq_get_list_count(SeqList *list)
 {
-	int res=0;
-	if(!list) {
+	int res = 0;
+	if (!list) {
 		return res;
 	}
 
@@ -164,22 +161,22 @@ int seq_get_list_count(SeqList *list)
 	return res;
 }
 
-SeqEntry * seq_index_list(SeqList *list, int index)
+SeqEntry *seq_index_list(SeqList *list, int index)
 {
-	SeqEntry *res=NULL;
-	int count=0;
-	if(!list) {
+	SeqEntry *res = NULL;
+	int count = 0;
+	if (!list) {
 		return res;
 	}
 
 	count = seq_get_list_count(list);
-	if (index<count) {
-		SeqEntry *ptr=list->head;
-		for (int ptrindex=0; ptrindex<index; ptrindex++) {
-			ptr=ptr->next;
+	if (index < count) {
+		SeqEntry *ptr = list->head;
+		for (int ptrindex = 0; ptrindex < index; ptrindex++) {
+			ptr = ptr->next;
 		}
 
-		res=ptr;
+		res = ptr;
 	}
 	return res;
 }
