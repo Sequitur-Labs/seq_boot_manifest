@@ -100,6 +100,11 @@ static int write_proc(SeqEntry *e, void *data)
 		return -1;
 	}
 
+	//Needs to be NAME_SIZE-1 for NULL terminator.
+	if (strlen(key->key) >= SEQ_MANIFEST_MAX_KEY_SIZE-1) {
+		return -1;
+	}
+
 	memset(transfer->ptr, 0, SEQ_MANIFEST_MAX_KEY_SIZE);
 	strncpy((char *)transfer->ptr, key->key, strlen(key->key));
 	transfer->ptr += SEQ_MANIFEST_MAX_KEY_SIZE;
@@ -244,6 +249,11 @@ static void fill_params(SeqManifest *params)
 	while (ptr < end) {
 		SeqParamKey *key = (SeqParamKey *)malloc(sizeof(SeqParamKey));
 		if (!key) {
+			break;
+		}
+
+		//Bounds test
+		if (ptr + SEQ_MANIFEST_MAX_KEY_SIZE + sizeof(uint32_t)*2 >= end) {
 			break;
 		}
 		memcpy(key->key, (char *)ptr, SEQ_MANIFEST_MAX_KEY_SIZE);
